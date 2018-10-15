@@ -5,6 +5,7 @@ var keys = require("./keys.js");
 var fs= require("fs");
 var request = require("request");
 var Spotify = require('node-spotify-api');
+var moment = require("moment");
 //var inquirer = require("inquirer");
 
 //Grab API keys/secret from .env file
@@ -25,6 +26,7 @@ function concertThis(artist) {
     //generate API URL
     var bitURL = "https://rest.bandsintown.com/artists/"+artist+"/events?app_id="+bit;
     console.log(bitURL);
+    var datetime;
 
     //now make API call
     request(bitURL, function(error, response, body) {
@@ -34,10 +36,23 @@ function concertThis(artist) {
         
             //console.log(body);
             var data = JSON.parse(body);
-            console.log(data);
-            console.log("\nVenue: "+data.venue.name+"\n");
-            console.log("\Location: "+data.venue.city+","+data.venue.region+","+data.venue.country+"\n");
-            //console.log("\nVenue: "+response.venue.name+"\n");
+            console.log(data[0]);
+            // loop through all concerts
+            for (let i=0;i<body.length;i++) {
+
+                //parse data
+                console.log("\nVenue: "+data[i].venue.name);
+                if(data[i].venue.city != '')
+                    console.log("City: "+data[i].venue.city);
+                if(data[i].venue.region != '')
+                    console.log("Region: "+data[i].venue.region);
+                if(data[i].venue.country != '')
+                    console.log("Country: "+data[i].venue.country);
+                datetime = moment(data[i].datetime,"YYYY-MM-DDtHH:mm:ss").format("MM/DD/YYYY");
+                console.log("Date: "+datetime+"\n");
+                //console.log("\nVenue: "+response.venue.name+"\n");
+            }
+
         }
     });
       
