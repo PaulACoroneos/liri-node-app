@@ -10,9 +10,10 @@ var moment = require("moment");
 
 //Grab API keys/secret from .env file
 var spotify = new Spotify(keys.spotify);
+//console.log("keys ",keys.spotify);
 //var omdb = new OMDB(keys.spotify);
 var bit = keys.bit.id;
-console.log("bit",bit);
+//console.log("bit",bit);
 
 //var spotifyUrl = 
 //var omdbUrl = 
@@ -25,7 +26,7 @@ function concertThis(artist) {
 
     //generate API URL
     var bitURL = "https://rest.bandsintown.com/artists/"+artist+"/events?app_id="+bit;
-    console.log(bitURL);
+    //console.log(bitURL);
     var datetime;
 
     //now make API call
@@ -58,11 +59,30 @@ function concertThis(artist) {
       
 }
 
-//This functiom
-function spotifyThisSong(userArg) {
-
+//This function
+function spotifyThisSong(song) {
+       
+    //default song
+    if(song == undefined) 
+        song="\"The+Sign\"%20NOT%20times";//we have to do this to get right song lol
+    else
+        song= "\""+song+"\"";   //search exact
+    //console.log("testing: ",song);
+    spotify.search({ type: 'track', query: song }, function(err, data) {
+        if (err) {
+          return console.log('Error occurred: ' + err);
+        }
+        console.log("Artist(s):");
+        for(let i=0; i <data.tracks.items[0].artists.length;i++) 
+            console.log(data.tracks.items[0].artists[i].name+"\n");
+        console.log("Song Name:")
+        console.log(data.tracks.items[0].name+"\n");
+        console.log("Preview Link:")
+        console.log(data.tracks.items[0].preview_url+"\n");
+        console.log("Song Album:")
+        console.log(data.tracks.items[0].album.name);
+    });
 }
-
 //This function
 function movieThis(userArg) {
 
