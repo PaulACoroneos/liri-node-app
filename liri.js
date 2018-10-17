@@ -59,7 +59,7 @@ function concertThis(artist,callback) {
                 }
                 if(data[i] === undefined && i===0) {
                     console.log("\nSorry we don't see any concerts. :(")
-                    logged.push("\nSorry we don't see any concerts. :(");
+                    logged.push("Sorry we don't see any concerts. :(");
                 }
             }
         }
@@ -186,7 +186,7 @@ function selectCommand(command,userArg) {
         break;
         case "movie-this":
         movieThis(userArg,function() {
-            console.log("logging!")
+            //console.log("logging!")
             logger();
         });
         break;
