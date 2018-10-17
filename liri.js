@@ -36,21 +36,25 @@ function concertThis(artist) {
         
             //console.log(body);
             var data = JSON.parse(body);
-            console.log(data[0]);
+            //console.log(data[0]);
             // loop through all concerts
             for (let i=0;i<body.length;i++) {
 
                 //parse data
-                console.log("\nVenue: "+data[i].venue.name);
-                if(data[i].venue.city != '')
-                    console.log("City: "+data[i].venue.city);
-                if(data[i].venue.region != '')
-                    console.log("Region: "+data[i].venue.region);
-                if(data[i].venue.country != '')
-                    console.log("Country: "+data[i].venue.country);
-                datetime = moment(data[i].datetime,"YYYY-MM-DDtHH:mm:ss").format("MM/DD/YYYY");
-                console.log("Date: "+datetime+"\n");
-                //console.log("\nVenue: "+response.venue.name+"\n");
+                if(data[i] != undefined) {
+                    console.log("\nVenue: "+data[i].venue.name);
+                    if(data[i].venue.city != '')
+                        console.log("City: "+data[i].venue.city);
+                    if(data[i].venue.region != '')
+                        console.log("Region: "+data[i].venue.region);
+                    if(data[i].venue.country != '')
+                        console.log("Country: "+data[i].venue.country);
+                    datetime = moment(data[i].datetime,"YYYY-MM-DDtHH:mm:ss").format("MM/DD/YYYY");
+                    console.log("Date: "+datetime+"\n");
+                    //console.log("\nVenue: "+response.venue.name+"\n");
+                }
+                if(data[i] === undefined && i===0)
+                    console.log("\nSorry we don't see any concerts. :(")
             }
 
         }
@@ -84,6 +88,8 @@ function spotifyThisSong(song) {
 }
 //This function
 function movieThis(title) {
+    if (!title) //if no title defined
+        title = "Mr. Nobody";
     var omdbURL = "http://www.omdbapi.com/?t="+"\""+title+"\""+"&y=&plot=short&type=movie&tomatoes=true&apikey="+omdb;
     //console.log("omdbURL",omdbURL);
 
@@ -93,7 +99,7 @@ function movieThis(title) {
     
             var parsed= JSON.parse(body);
             //console.log(body);
-            console.log("Movie Title: "+ parsed.Title);
+            console.log("\nMovie Title: "+ parsed.Title);
             console.log("Year Released: "+ parsed.Year);
             console.log("IMDB Rating: "+ parsed.Ratings[0].Value);
             console.log("Rotten Tomatoes Rating: "+parsed.Ratings[1].Value);
@@ -107,8 +113,44 @@ function movieThis(title) {
 }
 
 //This function
-function doWhatItSays(userArg) {
+function doWhatItSays() {
 
+    fs.readFile("random.txt","utf8",function(error,data){
+
+    if (error) {
+        return console.log(error);
+    }
+
+    //if no error lets parse what's in the file
+    var parsed = data.split(",");
+
+    console.log(parsed[0],parsed[1]);
+    //now execute function and pass arg
+    selectCommand(parsed[0],parsed[1]);
+
+    });
+
+}
+
+function selectCommand(command,userArg) {
+    //command handling
+    switch(command){
+        case "concert-this":
+        concertThis(userArg);
+        break;
+        case "spotify-this-song":
+        spotifyThisSong(userArg);
+        break;
+        case "movie-this":
+        movieThis(userArg);
+        break;
+        case "do-what-it-says":
+        doWhatItSays();
+        break;
+        default:
+        console.log("Invalid command. Please try again.");
+        break;
+    }
 }
 
 //This function logs the output to a log file
@@ -117,21 +159,4 @@ function doWhatItSays(userArg) {
 var command = process.argv[2];
 var userArg = process.argv[3];
 
-//command handling
-switch(command){
-    case "concert-this":
-    concertThis(userArg);
-    break;
-    case "spotify-this-song":
-    spotifyThisSong(userArg);
-    break;
-    case "movie-this":
-    movieThis(userArg);
-    break;
-    case "do-what-it-says":
-    doWhatItSays(userArg);
-    break;
-    default:
-    console.log("Invalid argument. Please try again.");
-    break;
-}
+selectCommand(command,userArg);
