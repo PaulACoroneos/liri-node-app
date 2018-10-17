@@ -10,9 +10,8 @@ var moment = require("moment");
 
 //Grab API keys/secret from .env file
 var spotify = new Spotify(keys.spotify);
-//console.log("keys ",keys.spotify);
-//var omdb = new OMDB(keys.spotify);
 var bit = keys.bit.id;
+var omdb = keys.omdb.id;
 //console.log("bit",bit);
 
 //var spotifyUrl = 
@@ -84,7 +83,26 @@ function spotifyThisSong(song) {
     });
 }
 //This function
-function movieThis(userArg) {
+function movieThis(title) {
+    var omdbURL = "http://www.omdbapi.com/?t="+"\""+title+"\""+"&y=&plot=short&type=movie&tomatoes=true&apikey="+omdb;
+    //console.log("omdbURL",omdbURL);
+
+    request(omdbURL, function(error, response, body) {
+
+        if (!error && response.statusCode === 200) {
+    
+            var parsed= JSON.parse(body);
+            //console.log(body);
+            console.log("Movie Title: "+ parsed.Title);
+            console.log("Year Released: "+ parsed.Year);
+            console.log("IMDB Rating: "+ parsed.Ratings[0].Value);
+            console.log("Rotten Tomatoes Rating: "+parsed.Ratings[1].Value);
+            console.log("Country Produced: "+parsed.Country );
+            console.log("Movie Language(s): "+parsed.Language);
+            console.log("Movie plot: "+parsed.Plot);
+            console.log("Movie Actors: "+parsed.Actors);
+        }
+    });
 
 }
 
